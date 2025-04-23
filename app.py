@@ -1,16 +1,23 @@
-from flask import Flask, jsonify
-from pnl import get_pnl
+from flask import Flask, render_template, request
+from pnl import compute_pnl
 
 app = Flask(__name__)
 
-@app.route('/v1/pnl/<string:strategy_id>', methods=['GET'])
-def pnl_endpoint(strategy_id):
-    """
-    HTTP GET /v1/pnl/{strategy_id}
-    """
-    result = get_pnl(strategy_id)
-    return jsonify(result), 200
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    result = None
+    error = None
+
+    if request.method == 'POST':
+        strategy = request.form.get('strategy')
+        sql_database = request.form.get('sql_database')
+
+        try:
+            result = compute_pnl(strategy, sql_database)
+        except Exception as e:
+            error = str(e)
+
+    return render_template('index.html', result=result, error=error)
 
 if __name__ == '__main__':
-    # for production you’d use gunicorn/uwsgi, but for local testing:
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
