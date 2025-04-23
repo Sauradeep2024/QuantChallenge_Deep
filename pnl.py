@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import sqlite3
 import pandas as pd
 
@@ -27,6 +27,6 @@ def compute_pnl(strategy, sql_database):
         "strategy":     strategy,
         "value":        total_pnl,
         "unit":         "euro",
-        "capture_time": datetime.utcnow().isoformat() + "Z"
+        "capture_time": datetime.now(timezone.utc).isoformat() + "Z"
     }
 
