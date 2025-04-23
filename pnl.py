@@ -13,7 +13,9 @@ def compute_pnl(strategy, sql_database):
 
     if df.empty:
         print(f"No trades found for {strategy}")
-        return 0.0
+        return {
+            "message": f"No trades found for {strategy}"
+        }
     
     df['income'] = df.apply(
         lambda row: row['quantity'] * row['price'] if row['side'] == 'sell'
